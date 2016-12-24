@@ -22,6 +22,11 @@ class AlertDialog extends Component {
   componentDidMount() {
     this.dialogWrapper.classList.add('open');
   }
+  onClickDialogBackdrop(e) {
+    if (e.target === this.dialogWrapper) {
+      this.onCloseDialog();
+    }
+  }
   onCloseDialog() {
     this.removeDialog();
     DialogManager.closeDialog(true);
@@ -45,7 +50,7 @@ class AlertDialog extends Component {
         {(value) => {
           const style = Effect[this.props.effect](value);
           return (
-            <div className="dialogWrapper" ref={(dialogWrapper) => { this.dialogWrapper = dialogWrapper; }}>
+            <div className="dialogWrapper" ref={(dialogWrapper) => { this.dialogWrapper = dialogWrapper; }} onClick={e => this.onClickDialogBackdrop(e)}>
               <section style={style} className="elevationTransition elevationZ24 dialog alertDialog">
                 <h3 className="alertDialogTitle">{this.props.title}</h3>
                 <section className="alertDialogContent">{this.props.content}</section>

@@ -28,7 +28,7 @@ const DialogManager = {
         console.error('%c DialogManager.closeDialog() method is invoked after the dialog is destroyed. [Possible Reason] You are passing closeOnAction prop as true and invoking DialogManager.closeDialog() at the same time.', 'color: white; font-weight: bold;');  // eslint-disable-line no-console
         console.error(e.message);  // eslint-disable-line no-console
       }
-    }, 700);
+    }, 500);
   }
 };
 
