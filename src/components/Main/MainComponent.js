@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { DialogManager, AlertDialog } from '../Dialog';
+import { DialogManager, AlertDialog, ModalDialog } from '../Dialog';
 
 class Main extends Component {
   constructor(props) {
@@ -13,13 +13,30 @@ class Main extends Component {
       // DialogManager.closeDialog();
     };
   }
-  onShowDialog() {
-    DialogManager.showDialog(<AlertDialog effect="SIDE_FALL" title={this.state.title} content={this.state.content} returnCallback={() => this.onReturnDialog()} closeOnAction />);
+  onShowAlertDialog() {
+    DialogManager.showDialog(
+      <AlertDialog effect="SIDE_FALL" title={this.state.title} content={this.state.content} returnCallback={() => this.onReturnDialog()} closeOnAction />
+    );
+  }
+  onShowModalDialog() {
+    const style = {
+      right: '10%',
+      bottom: 0
+    };
+    const childrenStyle = {
+      padding: '16px'
+    };
+    DialogManager.showDialog(
+      <ModalDialog effect="ROTATE_IN" style={style}>
+        <div style={childrenStyle}>Modal Dialog Component</div>
+      </ModalDialog>
+    );
   }
   render() {
     return (
       <div>
-        <button onClick={() => this.onShowDialog()}>Show Dialog</button>
+        <button onClick={() => this.onShowAlertDialog()}>Show Alert</button>
+        <button onClick={() => this.onShowModalDialog()}>Show Modal</button>
       </div>
     );
   }
