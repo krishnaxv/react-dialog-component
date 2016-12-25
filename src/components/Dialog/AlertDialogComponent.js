@@ -6,6 +6,8 @@ import Effect, { EffectConfig } from './Effect';
 class AlertDialog extends Component {
   static propTypes = {
     effect: PropTypes.string,
+    effectConfig: PropTypes.shape(),
+    effectReducer: PropTypes.func,
     title: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
     returnCallback: PropTypes.func,
@@ -13,7 +15,7 @@ class AlertDialog extends Component {
   }
   constructor(props) {
     super(props);
-    const effect = EffectConfig[props.effect];
+    const effect = EffectConfig[props.effect] || props.effectConfig;
     this.state = {
       dialog: effect,
       motion: effect.start
@@ -45,10 +47,11 @@ class AlertDialog extends Component {
     });
   }
   render() {
+    const effectReducer = Effect[this.props.effect] ? Effect[this.props.effect] : this.props.effectReducer;
     return (
       <Motion defaultStyle={this.state.motion.from} style={this.state.motion.to}>
         {(value) => {
-          const style = Effect[this.props.effect](value);
+          const style = effectReducer(value);
           return (
             <div className="dialogWrapper" ref={(dialogWrapper) => { this.dialogWrapper = dialogWrapper; }} onClick={e => this.onClickDialogBackdrop(e)}>
               <section style={style} className="elevationTransition elevationZ24 dialog alertDialog">
