@@ -3,18 +3,27 @@ import ReactDOM from 'react-dom';
 import AlertDialog from './AlertDialogComponent';  // eslint-disable-line no-unused-vars
 import ModalDialog from './ModalDialogComponent';  // eslint-disable-line no-unused-vars
 
-let dialogContainerNode = null;
-let Dialog = null;
+let dialogContainerNode;
+let Dialog;
+let dialogParentElement;
+const dialogDefaultParentElement = document.body;
+let dialogParentElementHeight;
 
 const DialogManager = {
-  renderDialog(component) {
+  renderDialog(component, parentElement = dialogDefaultParentElement) {
+    dialogParentElement = parentElement;
+    if (dialogParentElement === dialogDefaultParentElement) {
+      dialogParentElementHeight = dialogParentElement.style.height;
+      dialogParentElement.style.height = '100vh';
+      dialogParentElement.style.overflowY = 'hidden';
+    }
     dialogContainerNode = document.createElement('div');
-    document.body.appendChild(dialogContainerNode);
+    dialogParentElement.appendChild(dialogContainerNode);
     dialogContainerNode.classList.add('dialogContainer');
     Dialog = ReactDOM.render(component, dialogContainerNode);
   },
-  showDialog(component) {
-    this.renderDialog(component);
+  showDialog(component, parentElement = dialogDefaultParentElement) {
+    this.renderDialog(component, parentElement);
   },
   closeDialog(requestFromModule = false) {
     if (!requestFromModule) {
@@ -22,8 +31,12 @@ const DialogManager = {
     }
     setTimeout(() => {
       try {
+        if (dialogParentElement === dialogDefaultParentElement) {
+          dialogParentElement.style.height = dialogParentElementHeight;
+          dialogParentElement.style.overflowY = 'auto';
+        }
         ReactDOM.unmountComponentAtNode(dialogContainerNode);
-        document.body.removeChild(dialogContainerNode);
+        dialogParentElement.removeChild(dialogContainerNode);
       } catch (e) {
         console.error('%c DialogManager.closeDialog() method is invoked after the dialog is destroyed. [Possible Reason] You are passing closeOnAction prop as true and invoking DialogManager.closeDialog() at the same time.', 'color: white; font-weight: bold;');  // eslint-disable-line no-console
         console.error(e.message);  // eslint-disable-line no-console

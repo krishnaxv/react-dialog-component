@@ -51,7 +51,8 @@ class Main extends Component {
   }
   onShowAlertDialog() {
     DialogManager.showDialog(
-      <AlertDialog effect="SIDE_FALL" title={this.state.title} content={this.state.content} returnCallback={() => this.onReturnDialog()} closeOnAction />
+      <AlertDialog effect="SIDE_FALL" title={this.state.title} content={this.state.content} returnCallback={() => this.onReturnDialog()} closeOnAction />,
+      this.parent
     );
   }
   onShowModalDialog() {
@@ -62,10 +63,16 @@ class Main extends Component {
     );
   }
   render() {
+    const parentStyle = {
+      position: 'relative',
+      height: '400px',
+      width: '400px'
+    };
     return (
       <div>
         <button onClick={() => this.onShowAlertDialog()}>Show Alert</button>
         <button onClick={() => this.onShowModalDialog()}>Show Modal</button>
+        <div ref={(parent) => { this.parent = parent; }} style={parentStyle} />
       </div>
     );
   }
