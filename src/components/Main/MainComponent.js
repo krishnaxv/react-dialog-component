@@ -49,10 +49,9 @@ class Main extends Component {
       // DialogManager.closeDialog();
     };
   }
-  onShowAlertDialog() {
+  onShowAlertDialog(effect) {
     DialogManager.showDialog(
-      <AlertDialog effect="SIDE_FALL" title={this.state.title} content={this.state.content} returnCallback={() => this.onReturnDialog()} closeOnAction />,
-      this.parent
+      <AlertDialog effect={effect} title={this.state.title} content={this.state.content} returnCallback={() => this.onReturnDialog()} closeOnAction />
     );
   }
   onShowModalDialog() {
@@ -68,10 +67,25 @@ class Main extends Component {
       height: '400px',
       width: '400px'
     };
+    const divStyle = {
+      marginBottom: '16px'
+    };
+    const buttonStyle = {
+      display: 'block',
+      padding: '8px'
+    };
     return (
       <div>
-        <button onClick={() => this.onShowAlertDialog()}>Show Alert</button>
-        <button onClick={() => this.onShowModalDialog()}>Show Modal</button>
+        <div style={divStyle}><button style={buttonStyle} onClick={() => this.onShowAlertDialog('FADE_IN')}>FADE_IN Effect</button></div>
+        <div style={divStyle}><button style={buttonStyle} onClick={() => this.onShowAlertDialog('FADE_IN_SCALE')}>FADE_IN_SCALE Effect</button></div>
+        <div style={divStyle}><button style={buttonStyle} onClick={() => this.onShowAlertDialog('FALL')}>FALL Effect</button></div>
+        <div style={divStyle}><button style={buttonStyle} onClick={() => this.onShowAlertDialog('SIDE_FALL')}>SIDE_FALL Effect</button></div>
+        <div style={divStyle}><button style={buttonStyle} onClick={() => this.onShowAlertDialog('SLIDE_IN_TOP')}>SLIDE_IN_TOP Effect</button></div>
+        <div style={divStyle}><button style={buttonStyle} onClick={() => this.onShowAlertDialog('SLIDE_IN_RIGHT')}>SLIDE_IN_RIGHT Effect</button></div>
+        <div style={divStyle}><button style={buttonStyle} onClick={() => this.onShowAlertDialog('SLIDE_IN_BOTTOM')}>SLIDE_IN_BOTTOM Effect</button></div>
+        <div style={divStyle}><button style={buttonStyle} onClick={() => this.onShowAlertDialog('SLIDE_IN_LEFT')}>SLIDE_IN_LEFT Effect</button></div>
+        <div style={divStyle}><button style={buttonStyle} onClick={() => this.onShowAlertDialog('ROTATE_IN')}>ROTATE_IN Effect</button></div>
+        <div style={divStyle}><button style={buttonStyle} onClick={() => this.onShowModalDialog()}>Show Modal</button></div>
         <div ref={(parent) => { this.parent = parent; }} style={parentStyle} />
       </div>
     );
