@@ -7,11 +7,13 @@ import Effect, { EffectConfig } from './Effect';
 class ModalDialog extends Component {
   static propTypes = {
     effect: PropTypes.string,
+    effectConfig: PropTypes.shape(),
+    effectReducer: PropTypes.func,
     style: PropTypes.shape()
   }
   constructor(props) {
     super(props);
-    const effect = EffectConfig[props.effect];
+    const effect = EffectConfig[props.effect] || props.effectConfig;
     this.state = {
       dialog: effect,
       motion: effect.start
@@ -36,10 +38,11 @@ class ModalDialog extends Component {
     });
   }
   render() {
+    const effectReducer = Effect[this.props.effect] ? Effect[this.props.effect] : this.props.effectReducer;
     return (
       <Motion defaultStyle={this.state.motion.from} style={this.state.motion.to}>
         {(value) => {
-          const style = clone(assign(this.props.style, Effect[this.props.effect](value)));
+          const style = clone(assign(this.props.style, effectReducer(value)));
           return (
             <div className="dialogWrapper" ref={(dialogWrapper) => { this.dialogWrapper = dialogWrapper; }} onClick={e => this.onClickDialogBackdrop(e)}>
               <section style={style} className="elevationTransition elevationZ24 dialog modalDialog">
