@@ -8,6 +8,8 @@ let Dialog;
 let dialogParentElement;
 const dialogDefaultParentElement = document.body;
 let dialogParentElementHeight;
+let scrollTop;
+let dialogWrapperElement;
 
 const DialogManager = {
   renderDialog(component, parentElement = dialogDefaultParentElement) {
@@ -15,12 +17,20 @@ const DialogManager = {
     if (dialogParentElement === dialogDefaultParentElement) {
       dialogParentElementHeight = dialogParentElement.style.height;
       dialogParentElement.style.height = '100vh';
-      dialogParentElement.style.overflowY = 'hidden';
     }
+    dialogParentElement.style.overflowY = 'hidden';
     dialogContainerNode = document.createElement('div');
     dialogParentElement.appendChild(dialogContainerNode);
     dialogContainerNode.classList.add('dialogContainer');
     Dialog = ReactDOM.render(component, dialogContainerNode);
+    dialogWrapperElement = document.querySelector('.dialogWrapper');
+    if (dialogParentElement === dialogDefaultParentElement) {
+      dialogWrapperElement.style.position = 'fixed';
+    } else {
+      dialogWrapperElement.style.position = 'absolute';
+      scrollTop = dialogParentElement.scrollTop;
+      dialogWrapperElement.style.transform = `translateY(${scrollTop}px)`;
+    }
   },
   showDialog(component, parentElement = dialogDefaultParentElement) {
     this.renderDialog(component, parentElement);
@@ -33,8 +43,8 @@ const DialogManager = {
       try {
         if (dialogParentElement === dialogDefaultParentElement) {
           dialogParentElement.style.height = dialogParentElementHeight;
-          dialogParentElement.style.overflowY = 'auto';
         }
+        dialogParentElement.style.overflowY = 'auto';
         ReactDOM.unmountComponentAtNode(dialogContainerNode);
         dialogParentElement.removeChild(dialogContainerNode);
       } catch (e) {
