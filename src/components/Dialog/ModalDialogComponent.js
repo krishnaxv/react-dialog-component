@@ -21,6 +21,7 @@ class ModalDialog extends Component {
   }
   componentDidMount() {
     this.dialogWrapper.classList.add('open');
+    DialogManager.setDialogPosition(this.dialogWrapper);
   }
   onClickDialogBackdrop(e) {
     if (e.target === this.dialogWrapper) {
@@ -29,7 +30,7 @@ class ModalDialog extends Component {
   }
   onCloseDialog() {
     this.removeDialog();
-    DialogManager.closeDialog(true);
+    DialogManager.closeDialog(this, true);
   }
   removeDialog() {
     this.dialogWrapper.classList.add('hide');
