@@ -49,23 +49,30 @@ class Main extends Component {
       title: 'Just do it!',
       content: 'I said, "Just do it!". Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo ut quaerat itaque minus ab quas ipsum iure consequatur voluptatibus architecto assumenda dolores. Beatae, iste?'
     };
-    this.onReturnDialog = () => {
-      console.log('Dialog is closed.');  // eslint-disable-line no-console
-      // DialogManager.closeDialog();
+    this.onReturnDialog = (dialog) => {
+      DialogManager.closeDialog(dialog);
     };
   }
-  onShowAlertDialog() {
+  onShowAlertDialog(effect) {
     DialogManager.showDialog(
-      <AlertDialog effect="SIDE_FALL" title={this.state.title} content={this.state.content} returnCallback={() => this.onReturnDialog()} closeOnAction />
+      <AlertDialog effect={effect} title={this.state.title} content={this.state.content} returnCallback={dialog => this.onReturnDialog(dialog)} />,
+      this.parent
+    );
+  }
+
+  onShowAlertModalDialog() {
+    DialogManager.showDialog(
+      <AlertDialog effect="FALL" title={this.state.title} content={this.state.content} returnCallback={dialog => this.onReturnDialog(dialog)} />,
+      this.child
     );
   }
   onShowModalDialog() {
-    // DialogManager.showDialog(
-    //   <ModalDialog effectConfig={effectConfig} effectReducer={value => effectReducer(value)} style={style}>
-    //     <div style={childrenStyle}>Modal Dialog Component</div>
-    //   </ModalDialog>,
-    //   this.parent
-    // );
+    DialogManager.showDialog(
+      <ModalDialog effectConfig={effectConfig} effectReducer={value => effectReducer(value)} style={style}>
+        <div style={childrenStyle}>Modal Dialog Component</div>
+      </ModalDialog>,
+      this.parent
+    );
     DialogManager.showDialog(
       <ModalDialog effect="FALL">
         <div style={childrenStyle}>Modal Dialog Component</div>
@@ -99,6 +106,10 @@ class Main extends Component {
         <div style={divStyle}><button style={buttonStyle} onClick={() => this.onShowAlertDialog('SLIDE_IN_LEFT')}>SLIDE_IN_LEFT Effect</button></div>
         <div style={divStyle}><button style={buttonStyle} onClick={() => this.onShowAlertDialog('ROTATE_IN')}>ROTATE_IN Effect</button></div>
         <div style={divStyle}><button style={buttonStyle} onClick={() => this.onShowModalDialog()}>Show Modal</button></div>
+        <div style={divStyle}><button style={buttonStyle} onClick={() => this.onShowAlertModalDialog()}>onShowAlertModalDialog</button></div>
+        <div ref={(child) => { this.child = child; }} style={parentStyle}>
+          Ci
+        </div>
         <div ref={(parent) => { this.parent = parent; }} style={parentStyle}>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
         </div>

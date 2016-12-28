@@ -23,6 +23,7 @@ class AlertDialog extends Component {
   }
   componentDidMount() {
     this.dialogWrapper.classList.add('open');
+    DialogManager.setDialogPosition(this.dialogWrapper);
   }
   onClickDialogBackdrop(e) {
     if (e.target === this.dialogWrapper) {
@@ -31,14 +32,13 @@ class AlertDialog extends Component {
   }
   onCloseDialog() {
     this.removeDialog();
-    DialogManager.closeDialog(true);
+    DialogManager.closeDialog(this, true);
   }
   onCloseDialogNotify() {
     if (this.props.closeOnAction) {
-      this.removeDialog();
-      DialogManager.closeDialog();
+      this.onCloseDialog();
     }
-    this.props.returnCallback();
+    this.props.returnCallback(this);
   }
   removeDialog() {
     this.dialogWrapper.classList.add('hide');

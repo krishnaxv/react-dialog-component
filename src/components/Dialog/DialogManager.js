@@ -4,55 +4,61 @@ import AlertDialog from './AlertDialogComponent';  // eslint-disable-line no-unu
 import ModalDialog from './ModalDialogComponent';  // eslint-disable-line no-unused-vars
 
 let dialogContainerNode;
-let Dialog;
 let dialogParentElement;
 const dialogDefaultParentElement = document.body;
 let dialogParentElementHeight;
-let scrollTop;
-let dialogWrapperElement;
 
-const DialogManager = {
-  renderDialog(component, parentElement = dialogDefaultParentElement) {
+class DialogManager {
+  static showDialog(component, parentElement = dialogDefaultParentElement) {
+    this.renderDialog(component, parentElement);
+  }
+
+  static renderDialog(component, parentElement) {
     dialogParentElement = parentElement;
     if (dialogParentElement === dialogDefaultParentElement) {
       dialogParentElementHeight = dialogParentElement.style.height;
       dialogParentElement.style.height = '100vh';
     }
-    dialogParentElement.style.overflowY = 'hidden';
+    dialogParentElement.style.overflow = 'hidden';
     dialogContainerNode = document.createElement('div');
     dialogParentElement.appendChild(dialogContainerNode);
     dialogContainerNode.classList.add('dialogContainer');
-    Dialog = ReactDOM.render(component, dialogContainerNode);
-    dialogWrapperElement = document.querySelector('.dialogWrapper');
+    ReactDOM.render(component, dialogContainerNode);
+  }
+
+  static setDialogPosition(dialogWrapper) {
+    const dialogWrapperCopy = dialogWrapper;
     if (dialogParentElement === dialogDefaultParentElement) {
-      dialogWrapperElement.style.position = 'fixed';
+      dialogWrapperCopy.style.position = 'fixed';
     } else {
-      dialogWrapperElement.style.position = 'absolute';
-      scrollTop = dialogParentElement.scrollTop;
-      dialogWrapperElement.style.transform = `translateY(${scrollTop}px)`;
+      dialogWrapperCopy.style.position = 'absolute';
+      dialogWrapperCopy.style.transform = `translateY(${dialogParentElement.scrollTop}px)`;
     }
-  },
-  showDialog(component, parentElement = dialogDefaultParentElement) {
-    this.renderDialog(component, parentElement);
-  },
-  closeDialog(requestFromModule = false) {
+  }
+
+  static closeDialog(componentReference, requestFromModule = false) {
     if (!requestFromModule) {
-      Dialog.removeDialog();
+      // TODO: Dialog is the latest Dialog instance
+      componentReference.removeDialog();
     }
+    const dialogWrapper = componentReference.dialogWrapper;
     setTimeout(() => {
       try {
         if (dialogParentElement === dialogDefaultParentElement) {
           dialogParentElement.style.height = dialogParentElementHeight;
         }
-        dialogParentElement.style.overflowY = 'auto';
-        ReactDOM.unmountComponentAtNode(dialogContainerNode);
-        dialogParentElement.removeChild(dialogContainerNode);
+        const dialogParentNode = dialogWrapper.parentNode;
+        ReactDOM.unmountComponentAtNode(dialogParentNode);
+        dialogParentNode.parentNode.removeChild(dialogParentNode);
+        const isDialogInParentNode = dialogParentElement.querySelector('.dialogContainer');
+        if (isDialogInParentNode === null) {
+          dialogParentElement.style.overflow = 'auto';
+        }
       } catch (e) {
-        console.error('%c DialogManager.closeDialog() method is invoked after the dialog is destroyed. [Possible Reason] You are passing closeOnAction prop as true and invoking DialogManager.closeDialog() at the same time.', 'color: white; font-weight: bold;');  // eslint-disable-line no-console
-        console.error(e.message);  // eslint-disable-line no-console
+        console.error('%c React Dialog Component Error:', 'color: red; font-weight: bold;', e);  // eslint-disable-line no-console
       }
     }, 500);
   }
-};
+}
 
 export default DialogManager;
