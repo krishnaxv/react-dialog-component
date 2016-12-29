@@ -12,35 +12,36 @@ const childrenStyle = {
   padding: '16px'
 };
 
-const effectConfig = {
-  start: {
-    from: {
-      scale: 0,
-      height: 0
+const effectConfigReducer = {
+  config: {
+    start: {
+      from: {
+        scale: 0,
+        height: 0
+      },
+      to: {
+        scale: spring(1, presets.wobbly),
+        height: spring(320, presets.wobbly)
+      }
     },
-    to: {
-      scale: spring(1, presets.wobbly),
-      height: spring(320, presets.wobbly)
+    end: {
+      from: {
+        scale: 1,
+        height: 320
+      },
+      to: {
+        scale: spring(0, presets.noWobble),
+        height: spring(0, presets.noWobble)
+      }
     }
   },
-  end: {
-    from: {
-      scale: 1,
-      height: 320
-    },
-    to: {
-      scale: spring(0, presets.noWobble),
-      height: spring(0, presets.noWobble)
+  reducer: value => (
+    {
+      transform: `scale(${value.scale})`,
+      height: `${value.height}px`
     }
-  }
+  )
 };
-
-const effectReducer = value => (
-  {
-    transform: `scale(${value.scale})`,
-    height: `${value.height}px`
-  }
-);
 
 class Main extends Component {
   constructor(props) {
@@ -68,13 +69,7 @@ class Main extends Component {
   }
   onShowModalDialog() {
     DialogManager.showDialog(
-      <ModalDialog effectConfig={effectConfig} effectReducer={value => effectReducer(value)} style={style}>
-        <div style={childrenStyle}>Modal Dialog Component</div>
-      </ModalDialog>,
-      this.parent
-    );
-    DialogManager.showDialog(
-      <ModalDialog effect="FALL">
+      <ModalDialog effect={effectConfigReducer} style={style}>
         <div style={childrenStyle}>Modal Dialog Component</div>
       </ModalDialog>,
       this.parent

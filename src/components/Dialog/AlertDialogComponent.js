@@ -5,9 +5,10 @@ import Effect, { EffectConfig } from './Effect';
 
 class AlertDialog extends Component {
   static propTypes = {
-    effect: PropTypes.string,
-    effectConfig: PropTypes.shape(),
-    effectReducer: PropTypes.func,
+    effect: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.shape()
+    ]),
     title: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
     returnCallback: PropTypes.func,
@@ -15,7 +16,7 @@ class AlertDialog extends Component {
   }
   constructor(props) {
     super(props);
-    const effect = EffectConfig[props.effect] || props.effectConfig;
+    const effect = typeof (props.effect) === 'string' ? EffectConfig[props.effect] || 'FADE_IN' : props.effect.config;
     this.state = {
       dialog: effect,
       motion: effect.start
@@ -47,7 +48,7 @@ class AlertDialog extends Component {
     });
   }
   render() {
-    const effectReducer = Effect[this.props.effect] ? Effect[this.props.effect] : this.props.effectReducer;
+    const effectReducer = Effect[this.props.effect] ? Effect[this.props.effect] : this.props.effect.reducer;
     return (
       <Motion defaultStyle={this.state.motion.from} style={this.state.motion.to}>
         {(value) => {
