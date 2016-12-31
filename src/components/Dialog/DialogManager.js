@@ -4,13 +4,15 @@ import { forEach } from 'lodash';
 import AlertDialog from './AlertDialogComponent';  // eslint-disable-line no-unused-vars
 import ModalDialog from './ModalDialogComponent';  // eslint-disable-line no-unused-vars
 
+// Set document body as default parent of dialog component
+const defaultDialogParent = document.body;
+
 /**
  * Handles base methods of dialog component
  */
 class DialogManager {
   constructor() {
     this.dialogContainer = null;
-    this.defaultDialogParent = document.body;
     this.dialogParent = null;
     this.dialogParentHeight = null;
   }
@@ -20,7 +22,7 @@ class DialogManager {
    * @param {object} component - React dialog component
    * @param {object} [dialogParent=document.body] - Parent DOMNode of the dialog component
    */
-  static showDialog(component, dialogParent = this.defaultDialogParent) {
+  static showDialog(component, dialogParent = defaultDialogParent) {
     return this.renderDialog(component, dialogParent);
   }
 
@@ -31,18 +33,18 @@ class DialogManager {
    */
   static renderDialog(component, dialogParent) {
     this.dialogParent = dialogParent;
-    if (this.dialogParent === this.defaultDialogParent) {
+    if (dialogParent === defaultDialogParent) {
       // Save default height of `dialogParent` i.e `document.body` to restore later when dialog component will be closed
-      this.dialogParentHeight = this.getDOMNodeStyle(this.dialogParent, 'height');
+      this.dialogParentHeight = this.getDOMNodeStyle(dialogParent, 'height');
       this.setDOMNodeStyle(
-        this.dialogParent,
+        dialogParent,
         {
           height: '100vh'
         }
       );
     }
     this.setDOMNodeStyle(
-      this.dialogParent,
+      dialogParent,
       {
         overflow: 'hidden'
       }
@@ -67,7 +69,7 @@ class DialogManager {
    * @param {object} dialogWrapper - Wrapper element of the dialog component
    */
   static setDialogPosition(dialogWrapper) {
-    if (this.dialogParent === this.defaultDialogParent) {
+    if (this.dialogParent === defaultDialogParent) {
       this.setDOMNodeStyle(
         dialogWrapper,
         {
@@ -112,7 +114,7 @@ class DialogManager {
    * @return {object|null} - CSS style property value
    */
   static getDialogContainer(element) {
-    return element.querySelector('.dialogContainer');
+    return element.querySelector(':scope > .dialogContainer');
   }
 
   /**
@@ -121,6 +123,8 @@ class DialogManager {
    * @param {boolean} [requestFromModule=false] - Indicates whether close dialog request has been triggered by the user externally or internally from any of the module method
    */
   static closeDialog(component, requestFromModule = false) {
+    // Get parent DOMNode of dialog component
+    const dialogParent = component.dialogWrapper.closest('.dialogContainer').parentNode;
     // If dialog close request is triggered by the user i.e. `requestFromModule` is false, trigger leave animation before unmounting the dialog component
     if (!requestFromModule) {
       // Trigger leave animation
@@ -128,10 +132,10 @@ class DialogManager {
     }
     setTimeout(() => {
       try {
-        if (this.dialogParent === this.defaultDialogParent) {
+        if (dialogParent === defaultDialogParent) {
           // Reset height of `dialogParent`
           this.setDOMNodeStyle(
-            this.dialogParent,
+            dialogParent,
             {
               height: this.dialogParentHeight
             }
@@ -143,10 +147,10 @@ class DialogManager {
         // Remove dialog component container from DOM
         dialogContainer.parentNode.removeChild(dialogContainer);
         // Get dialog component container
-        const isDialogInParent = this.getDialogContainer(this.dialogParent);
+        const isDialogInParent = this.getDialogContainer(dialogParent);
         if (isDialogInParent === null) {
           this.setDOMNodeStyle(
-            this.dialogParent,
+            dialogParent,
             {
               overflow: 'auto'
             }
